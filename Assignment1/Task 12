@@ -1,0 +1,173 @@
+TASK 12 – Re-evaluate and Adapt the Design (8 Marks)
+A. Impact Analysis – 2 Marks
+The original parking system supported bikes, cars and electric cars with 3 floors. The new requirements introduce:
+•	Two new vehicle categories: E-Bike and Delivery Van.
+•	E-Bikes have a fixed flat parking fee.
+•	Delivery Vans are charged at double the car rate between 9 AM and 5 PM.
+•	Visitors can purchase a one-day parking pass.
+•	The parking facility is extended to 5 floors, with different slot counts on each floor.
+Affected classes and data structures:
+1.	Vehicle, ParkingFacility, and ParkingTicket need modifications.
+2.	New subclasses EBike and DeliveryVan are required.
+3.	Pricing logic must support different vehicle rates and time-based charges.
+4.	The original rectangular 2D array is unsuitable because every floor has a different number of slots. A jagged array is required.
+Example:
+String[][] slots = {
+    new String[10],
+    new String[15],
+    new String[8],
+    new String[12],
+    new String[20]
+};
+Existing classes such as Car and TwoWheeler can remain unchanged if the new pricing rules are handled separately.
+B. Evaluation of the Original Design – 2 Marks
+The original design uses inheritance, method overriding and interfaces. It is suitable for adding new vehicle types because new subclasses can be created without rewriting existing vehicle classes.
+However, placing all pricing conditions inside individual vehicle classes can make future changes difficult. For example, delivery van charges depend on the parking time.
+Therefore, a separate PricingRule abstraction is better because all pricing rules can be maintained in one place.
+The existing tested classes can mostly remain unchanged. Only the parking facility, ticket handling and pricing-related design need modification.
+C. Adaptation or Redesign – 2 Marks
+Decision: MODIFY the original design.
+The revised design uses inheritance, interfaces, a pricing abstraction and a jagged array.
+Revised class structure:
+              Vehicle (Abstract)
+                    |
+       ----------------------------
+       |          |       |       |
+   TwoWheeler    Car   EBike  DeliveryVan
+                    |
+                ElectricCar
+
+        PricingRule (Interface)
+                 |
+          ParkingPricing
+
+          Pass (Interface)
+                 |
+            OneDayPass
+
+          ParkingFacility
+                 |
+          Jagged Array
+Java implementation:
+import java.time.LocalTime;
+abstract class Vehicle {
+    String regNo;
+
+    Vehicle(String regNo) {
+        this.regNo = regNo;
+    }
+}
+class Car extends Vehicle {
+    Car(String regNo) {
+        super(regNo);
+    }
+}
+class EBike extends Vehicle {
+    EBike(String regNo) {
+        super(regNo);
+    }
+}
+
+class DeliveryVan extends Vehicle {
+    DeliveryVan(String regNo) {
+        super(regNo);
+    }
+}
+interface PricingRule {
+    double calculateFee(Vehicle v, int hours, LocalTime time);
+}
+class ParkingPricing implements PricingRule {
+    public double calculateFee(
+        Vehicle v, int hours, LocalTime time) {
+        if (v instanceof EBike)
+            return 20; // Flat fee
+        if (v instanceof DeliveryVan) {
+            double rate = 30;
+            if (!time.isBefore(LocalTime.of(9, 0)) &&
+                time.isBefore(LocalTime.of(17, 0))) {
+                rate = rate * 2;
+            }
+            return rate * hours;
+        }
+        if (v instanceof Car)
+            return 30 * hours;
+        return 10 * hours;
+    }
+}
+interface Pass {
+    boolean isValid();
+}
+
+class OneDayPass implements Pass {
+    public boolean isValid() {
+        return true;
+    }
+    double getFee() {
+        return 100;
+    }
+}
+class ParkingFacility {
+    String[][] slots = {
+        new String[10],
+        new String[15],
+        new String[8],
+        new String[12],
+        new String[20]
+    };
+    void displayFloors() {
+        for (int i = 0; i < slots.length; i++) {
+            System.out.println(
+                "Floor " + (i + 1) +
+                " Slots: " + slots[i].length);
+        }
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        ParkingPricing pricing = new ParkingPricing();
+        System.out.println("E-Bike Fee: " +
+            pricing.calculateFee(
+                new EBike("EB101"), 3,
+                LocalTime.of(10, 0)));
+
+        System.out.println("Delivery Van Fee: " +
+            pricing.calculateFee(
+                new DeliveryVan("DV101"), 2,
+                LocalTime.of(10, 0)));
+        OneDayPass pass = new OneDayPass();
+        System.out.println("One Day Pass Fee: " +
+            pass.getFee());
+        ParkingFacility parking = new ParkingFacility();
+        parking.displayFloors();
+    }
+}
+Expected Output:
+E-Bike Fee: 20.0
+Delivery Van Fee: 120.0
+One Day Pass Fee: 100.0
+Floor 1 Slots: 10
+Floor 2 Slots: 15
+Floor 3 Slots: 8
+Floor 4 Slots: 12
+Floor 5 Slots: 20
+Assumptions: E-Bike flat fee = ₹20, one-day pass = ₹100, car rate = ₹30 per hour. Delivery van charges double the car rate during 9 AM–5 PM. The example calculates fees for whole hours.
+D. Evidence-Based Defence – 2 Marks
+The modified design is more flexible and maintainable.
+Evaluation	Result
+Existing classes modified	Mainly ParkingFacility and pricing/ticket handling
+New vehicle types	Added using EBike and DeliveryVan subclasses
+Future vehicle addition	Can be added through another subclass and pricing rule
+Different floor sizes	Supported using jagged arrays
+One-day pass	Implemented using Pass interface
+Pricing management	Centralized in ParkingPricing
+Test Results:
+Test case	Expected result	Actual result
+E-Bike flat fee	₹20	₹20
+Delivery Van – 2 hours at 10 AM	₹120	₹120
+One-day pass	₹100	₹100
+Five floors	5	5
+Trade-offs:
+•	A separate pricing class makes the system easier to maintain, but introduces an additional class.
+•	A jagged array supports different floor sizes, but requires checking each floor separately.
+•	Adding new subclasses reduces changes to existing vehicle classes, but new pricing rules must also be defined.
+
