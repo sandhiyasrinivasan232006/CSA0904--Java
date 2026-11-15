@@ -1,0 +1,130 @@
+TASK 8 – Apply Polymorphism (4 Marks)
+1. Compile-Time Polymorphism (Method Overloading)
+Method overloading means creating multiple methods with the same name but different parameters. The compiler selects the correct method based on the arguments.
+Example:
+double calculateFee(int minutes) {
+    return 50;
+}
+
+double calculateFee(double hours) {
+    return hours * 30;
+}
+Here, the compiler selects the method based on the argument type.
+2. Runtime Polymorphism (Method Overriding)
+Runtime polymorphism allows a parent class reference to hold different child class objects.
+Example:
+Vehicle[] parked = {
+    new TwoWheeler("TN01A1"),
+    new Car("TN02B2"),
+    new ElectricCar("TN03C3")
+};
+This is called upcasting.
+Dynamic method dispatch automatically calls the correct overridden method at runtime.
+3. Completed Java Program
+interface Chargeable {
+    double chargingFee(int kWh);
+}
+abstract class Vehicle {
+    private final String regNo;
+    protected Vehicle(String regNo) {
+        this.regNo = regNo;
+    }
+    public String getRegNo() {
+        return regNo;
+    }
+    protected abstract double ratePerHour();
+    // Calculate parking fee
+    public double calculateFee(int minutes) {
+        int hours = (minutes + 59) / 60;
+        return hours * ratePerHour();
+    }
+    // Overloaded method
+    public double calculateFee(double hours) {
+        return hours * ratePerHour();
+    }
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Vehicle &&
+               regNo.equals(((Vehicle) o).regNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return regNo.hashCode();
+    }
+}
+class TwoWheeler extends Vehicle {
+    TwoWheeler(String regNo) {
+        super(regNo);
+    }
+    @Override
+    protected double ratePerHour() {
+        return 10;
+    }
+}
+class Car extends Vehicle {
+    Car(String regNo) {
+        super(regNo);
+    }
+    @Override
+    protected double ratePerHour() {
+        return 30;
+    }
+}
+class ElectricCar extends Car implements Chargeable {
+    ElectricCar(String regNo) {
+        super(regNo);
+    }
+    @Override
+    public double chargingFee(int kWh) {
+        return kWh * 12;
+    }
+}
+public class FeeDemo {
+    public static void main(String[] args) {
+        Vehicle[] parked = {
+            new TwoWheeler("TN01A1"),
+            new Car("TN02B2"),
+            new ElectricCar("TN03C3")
+        };
+        for (Vehicle v : parked) {
+            double fee = v.calculateFee(130);
+            if (v instanceof Chargeable c)
+                fee += c.chargingFee(10);
+            System.out.println(v.getClass().getSimpleName()
+                + " " + v.getRegNo() + " -> Rs " + fee);
+        }
+        System.out.println(
+            new Car("TN02B2").equals(
+                new ElectricCar("TN02B2")
+            )
+        );
+    }
+}
+4. Expected Output
+TwoWheeler TN01A1 -> Rs 30.0
+Car TN02B2 -> Rs 90.0
+ElectricCar TN03C3 -> Rs 210.0
+true
+5. Dynamic Method Dispatch Trace
+When v.calculateFee(130) is executed:
+Declared Reference Type	Actual Object Type	Rate
+Vehicle	TwoWheeler	₹10
+Vehicle	Car	₹30
+Vehicle	ElectricCar	₹30
+For 130 minutes, billable hours = 3.
+•	TwoWheeler: 3 × 10 = ₹30
+•	Car: 3 × 30 = ₹90
+•	ElectricCar: (3 × 30) + (10 × 12) = ₹210
+The JVM selects the correct overridden ratePerHour() method based on the actual object type.
+6. Why Does the Last Line Print true?
+The equals() method compares registration numbers.
+Both objects have the same registration number TN02B2. Therefore, it returns true.
+However, in a real parking system, two different vehicles should not be considered the same vehicle merely because their registration numbers match across different vehicle types. A stricter comparison can also check the vehicle category.
+7. Alternative Concept – instanceof vs Dynamic Dispatch
+Comparison	Dynamic Dispatch	instanceof and Casting
+Method selection	Automatically at runtime	Manually using conditions
+Time complexity	O(1)	Up to O(k) checks
+Code size	Less code	More if–else conditions
+Maintenance	Easy to extend	Difficult when new types are added
+Flexibility	High	Lower
