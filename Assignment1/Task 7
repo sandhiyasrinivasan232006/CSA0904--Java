@@ -1,0 +1,94 @@
+TASK 7 – Override and Specialise Behaviour (4 Marks)
+1. Method Overriding
+Method overriding allows a subclass to provide its own implementation of a method inherited from the parent class.
+In the Parking Management System, different vehicles may have different parking fees. Therefore, calculateFee() is overridden in Car, Bike and Bus classes.
+2. Java Program Using @Override
+class Vehicle {
+    String vehicleNo;
+    Vehicle(String vehicleNo) {
+        this.vehicleNo = vehicleNo;
+    }
+    double calculateFee() {
+        return 50;
+    }
+    @Override
+    public String toString() {
+        return "Vehicle Number: " + vehicleNo;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Vehicle))
+            return false;
+        Vehicle v = (Vehicle) obj;
+        return vehicleNo.equals(v.vehicleNo);
+    }
+    @Override
+    public int hashCode() {
+        return vehicleNo.hashCode();
+    }
+}
+class Car extends Vehicle {
+    Car(String vehicleNo) {
+        super(vehicleNo);
+    }
+    @Override
+    double calculateFee() {
+        return 100;
+    }
+}
+class Bike extends Vehicle {
+    Bike(String vehicleNo) {
+        super(vehicleNo);
+    }
+    @Override
+    double calculateFee() {
+        return 30;
+    }
+}
+class Bus extends Vehicle {
+    Bus(String vehicleNo) {
+        super(vehicleNo);
+    }
+    @Override
+    double calculateFee() {
+        return 150;
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        Vehicle v1 = new Car("TN01AB1234");
+        Vehicle v2 = new Bike("TN02CD5678");
+
+        System.out.println(v1.calculateFee());
+        System.out.println(v2.calculateFee());
+        System.out.println(v1);
+    }
+}
+3. Rules of Method Overriding
+1.	The method name and parameter list must be the same.
+2.	The return type must be the same or compatible (covariant).
+3.	The subclass cannot reduce the access level of the overridden method.
+4.	@Override annotation identifies overridden methods and helps detect mistakes.
+4. Use of final Keyword
+Usage	Purpose
+final variable	Prevents changing the assigned value.
+final method	Prevents subclasses from overriding the method.
+final class	Prevents inheritance.
+Example:
+final int MAX_SLOTS = 100;
+This ensures that the maximum slot limit cannot be reassigned.
+5. Object Class Methods
+•	toString(): Returns vehicle details as a String.
+•	equals(): Compares two vehicles using registration numbers.
+•	hashCode(): Generates the same hash code for vehicles with equal registration numbers.
+Therefore, two Vehicle objects with the same registration number are treated as equal.
+6. Alternative Concept – Switch vs Method Overriding
+Comparison	Method Overriding	Switch Statement
+Fee calculation	Each subclass calculates its fee.	One method checks vehicle type.
+Adding new vehicle type	Create a new subclass.	Add a new case.
+Time complexity	O(1)	O(1)
+Code maintenance	Easier to extend.	Requires modifying switch logic.
+Classes changed	Usually only the new subclass.	Vehicle fee calculation class must change.
+
