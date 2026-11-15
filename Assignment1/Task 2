@@ -1,0 +1,43 @@
+TASK 2 – Choose the Data Representation (3 Marks)
+1. Data Types Selection
+Field	Java Data Type	Reason
+Slot Number	int	Stores slot number.
+Vehicle Number	String	Supports letters and numbers (TN01AB1234).
+Entry Time	LocalDateTime	Stores date and time accurately.
+Duration	double	Stores parking duration in hours.
+Parking Fee	double	Stores decimal fee values.
+
+2. Array Representation
+I will use a two-dimensional array to represent parking floors and slots.
+String[][] parking = new String[3][10];
+
+
+- 3 rows represent 3 floors.
+- 10 columns represent 10 slots on each floor.
+- null indicates an available slot.
+- A vehicle number indicates an occupied slot.
+A 2D array is suitable because parking slots are arranged floor-wise.
+3. Type Conversion and Casting
+Type conversion is required when calculating parking fees. Integer division may produce incorrect results.
+
+Example:
+int minutes = 90;
+double hours = minutes / 60;
+
+
+Output: 1.0 (incorrect, because integer division removes the decimal part).
+
+Correct method:
+double hours = minutes / 60.0;
+double fee = hours * 20;
+System.out.println(fee);
+
+
+Output: 30.0
+
+Using 60.0 ensures floating-point division and avoids precision loss.
+4. Input Method
+I will use the Scanner class to read vehicle numbers, slot numbers and entry details from the user.
+Scanner sc = new Scanner(System.in);
+String vehicleNo = sc.nextLine();
+int slotNo = sc.nextInt();
