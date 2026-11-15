@@ -1,0 +1,91 @@
+TASK 6 – Design the Inheritance Hierarchy (4 Marks)
+1. Superclass and Subclasses
+In the Parking Management System, Vehicle is the superclass. Car, Bike, Bus and ElectricCar are subclasses.
+
+This uses hierarchical inheritance because multiple classes inherit from one superclass. ElectricCar also extends Car, forming multilevel inheritance.
+- Vehicle: Contains common fields such as vehicle number and vehicle type.
+- Car: Inherits Vehicle and adds seating capacity.
+- Bike: Inherits Vehicle and adds engine capacity.
+- Bus: Inherits Vehicle and adds passenger capacity.
+- ElectricCar: Inherits Car and adds battery capacity.
+2. UML Class Diagram
+
+                 Vehicle
+          ----------------------
+          - vehicleNo: String
+          - vehicleType: String
+          ----------------------
+          + displayDetails()
+                  |
+       -----------------------
+       |          |          |
+      Car        Bike       Bus
+       | 
+   ElectricCar
+
+
+
+3. Use of super Keyword
+The super keyword is used to access parent class constructors, methods and fields.
+
+Java Program:
+
+class Vehicle {
+    String vehicleNo;
+
+    Vehicle(String vehicleNo) {
+        this.vehicleNo = vehicleNo;
+        System.out.println("Vehicle Constructor");
+    }
+}
+
+class Car extends Vehicle {
+    int seats;
+
+    Car(String vehicleNo, int seats) {
+        super(vehicleNo);
+        this.seats = seats;
+        System.out.println("Car Constructor");
+    }
+}
+
+class ElectricCar extends Car {
+    int batteryCapacity;
+
+    ElectricCar(String vehicleNo, int seats, int battery) {
+        super(vehicleNo, seats);
+        this.batteryCapacity = battery;
+        System.out.println("ElectricCar Constructor");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        ElectricCar e = new ElectricCar("TN01AB1234", 5, 60);
+    }
+}
+
+
+
+4. Constructor Execution Order
+When an ElectricCar object is created, constructors execute from the parent class to the child class.
+
+Execution Trace:
+1. Vehicle constructor executes.
+2. Car constructor executes.
+3. ElectricCar constructor executes.
+Output:
+Vehicle Constructor
+Car Constructor
+ElectricCar Constructor
+
+
+5. Alternative Concept – Composition vs Inheritance
+Composition means a Vehicle object contains a VehicleType object that stores vehicle category and parking rate.
+Comparison	Inheritance	Composition
+Design	Car extends Vehicle	Vehicle has VehicleType
+Adding new type	Create a new subclass	Create a new VehicleType
+Fee calculation	Use subclass-specific method	Use VehicleType rate
+Flexibility	Less flexible for changing types	More flexible
+Time complexity	O(1)	O(1)
+Space per vehicle	Object fields + subclass fields	Vehicle fields + VehicleType reference
