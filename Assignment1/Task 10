@@ -1,0 +1,82 @@
+TASK 10 – Enforce Encapsulation through Packages and Access Modifiers (3 Marks)
+1. Package Structure
+The Parking Management System is divided into three packages to organize the classes.
+parking
+   |
+   |--- model
+   |      |--- Vehicle.java
+   |      |--- ParkingSlot.java
+   |      |--- ParkingTicket.java
+   |
+   |--- service
+   |      |--- ParkingService.java
+   |      |--- PaymentService.java
+   |
+   |--- app
+          |--- Main.java
+•	parking.model – Stores data and classes.
+•	parking.service – Handles parking operations and fee calculations.
+•	parking.app – Contains the main program.
+2. Access Modifiers
+Modifier	Usage	Reason
+private	Class fields	Protects data from direct access.
+public	Getters and setters	Allows controlled access.
+protected	Parent class methods	Allows access in subclasses.
+default	Package-level methods	Restricts access within the same package.
+3. Encapsulation Using Getters and Setters
+Encapsulation means wrapping data and methods into a single class and protecting data using private fields.
+Java Program:
+class ParkingSlot {
+    private int slotNo;
+    private int duration;
+    public int getSlotNo() {
+        return slotNo;
+    }
+
+    public void setSlotNo(int slotNo) {
+        if (slotNo > 0) {
+            this.slotNo = slotNo;
+        } else {
+            System.out.println("Invalid slot number");
+        }
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        if (duration >= 0) {
+            this.duration = duration;
+        } else {
+            System.out.println("Invalid duration");
+        }
+    }
+}
+Advantages:
+•	Protects data from unauthorized modification.
+•	Validates values before updating.
+•	Improves security and maintainability.
+4. Wrapper Classes and Autoboxing
+Wrapper classes convert primitive data types into objects.
+Example:
+Integer slotNo = 10;  // Autoboxing
+int slot = slotNo;    // Unboxing
+Risk: Comparing Integer objects using == may give incorrect results because it can compare object references instead of values.
+Correct method:
+Integer a = 1000;
+Integer b = 1000;
+System.out.println(a.equals(b)); // true
+5. Alternative Concept and Complexity Analysis
+If fields are public, any class can directly modify them without validation.
+Example:
+public int duration = -10;
+This can create invalid parking records.
+Comparison	Private Fields	Public Fields
+Data access	Through getters/setters	Direct access
+Validation	Inside setter	Repeated in calling code
+Security	Better protection	Less protection
+Maintenance	Easy	Difficult
+Validation time	O(1) per update	O(1) per check
+For n updates, validation takes O(n) time in both approaches, but public fields may require repeating the same validation in multiple places.
+
